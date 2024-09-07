@@ -44,7 +44,7 @@ vector<MovieC> MovieC::CreateMovies()
    
     MovieBuilder movieBuilder2;
     movies.push_back(movieBuilder2.SetTitle("Ghosted").AddGenre(MovieGenreE::ACTION).SetRating(9.0)
-            .AddShowTime({DayE::FRIDAY,TimeE::NINE_AM}).AddShowTime({DayE::FRIDAY,TimeE::SIX_PM}).Build());
+            .AddShowTime({DayE::SATURDAY,TimeE::NINE_AM}).AddShowTime({DayE::SATURDAY,TimeE::SIX_PM}).Build());
    
     MovieBuilder movieBuilder3;
     movies.push_back(movieBuilder3.SetTitle("The Conjuring").AddGenre(MovieGenreE::HORROR).SetRating(6.5)
@@ -56,10 +56,12 @@ vector<MovieC> MovieC::CreateMovies()
     return movies;
 }
 
-void MovieC::getshowtimes()
+void MovieC::Displayshowtimes()
 {
+    int cnt =1;
     cout<<this->m_title<<endl;
     for(auto i : this->m_showTimes){
-        cout << "Day: " << dayToString(i.m_movieDay) << " Time: " << timeToString(i.m_time) << endl;
+        cout <<cnt<< ")Day: " << dayToString(i.m_movieDay) << " Time: " << timeToString(i.m_time) << endl;
+        cnt++;
     }
 }

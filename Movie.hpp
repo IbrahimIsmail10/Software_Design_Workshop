@@ -28,7 +28,8 @@ class MovieC {
         const vector<ShowTimeS>& GetShowTime() const { return m_showTimes; }
         string GetGenreStr();
         vector<MovieC> CreateMovies();
-        void getshowtimes();
+        void Displayshowtimes();
+        ShowTimeS GetShowTimeByIdx(int idx) const { return m_showTimes[idx]; }
 
     private:
         string m_title;

@@ -2,7 +2,7 @@
 #define COMMON_HPP
 
 #include <array>
-#include <map>
+#include<functional>
 
 using namespace std;
 
@@ -51,5 +51,20 @@ enum class MovieGenreE {
 struct ShowTimeS {
     DayE m_movieDay;
     TimeE m_time;
+
+    bool operator==(const ShowTimeS& other) const {
+        return m_movieDay == other.m_movieDay && m_time == other.m_time;
+    }
+};
+
+struct ShowTimeHash {
+    size_t operator()(const ShowTimeS& showTime) const {
+        int value1 = (int)showTime.m_movieDay;
+        int value2 = (int)showTime.m_time;
+
+        size_t hash1 = hash<int>{}(value1);
+        size_t hash2 = hash<int>{}(value2);
+        return hash1 ^ (hash2 << 1);
+    }
 };
 #endif

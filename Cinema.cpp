@@ -1,6 +1,9 @@
-
 #include "Cinema.hpp"
+#define DEPIT "debit"
+#define CREDIT "credit"
+#define PAYPAL "paypal"
 unique_ptr<CinemaC> CinemaC::m_cinemaInst = nullptr;
+ShowTimeS show_time;
 
 unique_ptr<CinemaC>& CinemaC::GetCinemaInst()
 {
@@ -25,18 +28,114 @@ void CinemaC::CreateHalls(int numberOfHalls)
     }
 }
 
-void CinemaC::DisplaySeats() const
+void CinemaC::DisplayHall(int hall_num) const
 {
-    for(const auto& hall : m_halls) {
-        cout << "Hall number: " << hall->getHallNumber() << endl;
-        hall->displaySeats();
-    }
+        cout<<"Hall Number: "<<hall_num<<endl;
+        m_halls[hall_num-1]->displayHall();
 }
 
 void CinemaC::get_movie_ShowTime(int idx) {
-    m_movies[idx].getshowtimes();
-    }
+    m_movies[idx].Displayshowtimes();
+}
 
+void CinemaC::AssignMoviesToHalls()
+{
+    for(int i = 0;i< m_movies.size();i++) {
+        for(auto& showTime : m_movies[i].GetShowTime()) {
+            for(auto& hall : m_halls) {
+                if(hall->Assign_ShowTime_To_Hall(i, showTime)){
+                    // m_hallShowtimes[hall->getHallNumber()].push_back({i, showTime});
+                    break;
+                }
+            }
+        }
+    }
+}
+
+int CinemaC::GetHallNumber(int film_idx , int showtime_idx) const
+{
+    show_time = m_movies[film_idx].GetShowTimeByIdx(showtime_idx);
+            
+    for(auto& hall : m_halls) {
+        if(hall->isShowTimeAssigned(film_idx, show_time)) {
+            return hall->getHallNumber();
+        }
+    }
+    return -1;
+}
+
+void CinemaC::ReserveSeat(int hall_num, int movie_idx, int showtime_idx, const string& seatNumber)
+{
+    auto hall = m_halls[hall_num-1];
+    auto seat = hall->findSeat(seatNumber);
+    if(seat) {
+        if(hall->isSeatAvailable(seatNumber)) {
+            cout << "This Seat is "<< seat->getCategory()<<endl;
+            int price = c_DayPrice.at(show_time.m_movieDay) + c_TimePrice.at(show_time.m_time) + c_categoryPrice.at(seat->getCategory());
+            if(PaymentProcess(price)){
+                seat->isAvailable = false;
+                cout<<"Seat Reserved"<<endl;
+            }
+            else{ cout<<"Payment Failed"<<endl;}  
+        } 
+        else {
+            cout<<"Seat is not available"<<endl;
+        }
+    } 
+    else {
+        cout<<"Seat not found"<<endl;
+    }
+}
+
+bool CinemaC::PaymentProcess(int price)
+{
+    cout<<"Total Price: "<<price<<endl;
+    cout<<"Do you want to complete payment? (y/n): ";
+    string s; cin>>s;
+    if (s == "y")
+    {
+        string payment_type;
+        cout<<"Enter Payment Type: ";
+        cin>>payment_type;
+        if(payment_type == DEPIT || payment_type == CREDIT) {
+            string security_code;
+            string phone;
+            cout<<"Enter Security Code: ";
+            cin>>security_code;
+            cout<<"Enter Phone Number: ";
+            cin>>phone;
+            payment = PaymentFactory::CreatePayment(payment_type, security_code, phone);
+            if(payment) {
+                payment->ProcessPayment();
+                return true;
+            } else {
+                cout<<"Invalid Payment Type"<<endl;
+                return false;
+            }
+        }
+        else if(payment_type == PAYPAL) {
+            string email;
+            string password;
+            cout<<"Enter Email: ";
+            cin>>email;
+            cout<<"Enter Password: ";
+            cin>>password;
+            payment = PaymentFactory::CreatePayment(payment_type,password, email);
+            if(payment) {
+                payment->ProcessPayment();
+                return true;
+            } else {
+                cout<<"Invalid Payment Type"<<endl;
+                return false;
+            }
+        } 
+        else {
+            cout<<"Invalid Payment Type"<<endl;
+            return false;
+        }
+    }
+               
+}
 
 
 

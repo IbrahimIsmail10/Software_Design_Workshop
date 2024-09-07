@@ -11,6 +11,9 @@ public:
     bool isAvailable;
 
     Seat(const string& number) : seatNumber(number), isAvailable(true) {}
+     bool isSeatAvailable() const {
+        return this->isAvailable ? true : false;
+    }
 
     virtual ~Seat() = default;
     virtual string getCategory() const = 0;
