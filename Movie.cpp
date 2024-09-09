@@ -1,5 +1,4 @@
 #include "Movie.hpp"
-#include "Functions.cpp"
 
 string MovieC::GetGenreStr()
 {

@@ -8,8 +8,9 @@
 #include <map>
 #include "hall.cpp"
 #include "Movie.hpp"
-#include "Common.hpp"
-// #include "user.hpp"
+// #include "Common.hpp"
+// #include "Ticket.hpp"
+#include "user.hpp"
 using namespace std;
 
 class CinemaC {
@@ -26,7 +27,11 @@ class CinemaC {
         int GetHallNumber(int film_idx , int showtime_idx) const;
         void ReserveSeat(int hall_num, int movie_idx, int showtime_idx, const string& seatNumber);
         bool PaymentProcess(int price);
-        
+        void AddUserToHistory(UserC& user,MovieC& movie) ;
+        void AddShowTime(const ShowTimeS& showtime, int movieIndex){m_movies[movieIndex].AddShowTime(showtime);}
+        void DisplayUsersWatchingMovie(int movie_idx);
+        void userMoviesHistory(const string& username);
+
     private:
         static unique_ptr<CinemaC> m_cinemaInst;
     private:
@@ -36,7 +41,8 @@ class CinemaC {
         Payment *payment;
         // map<int, vector<pair<int, ShowTimeS>>> m_hallShowtimes;
         vector<MovieC> m_movies;
-        // vector<UserC> m_users;
+        vector<shared_ptr<UserC>> users;
+        unordered_map<string ,vector<string>> m_usersToMovies;
         vector<shared_ptr<Hall>> m_halls;
         const map<DayE, float> c_DayPrice = {
             {DayE::THURSDAY, 70},
@@ -59,8 +65,8 @@ class CinemaC {
 
          const map<string, float> c_categoryPrice = {
             {"Regular", 5},
-            {"Premium", 25},
-            {"Gold", 30}
+            {"Premium", 35},
+            {"Gold", 45}
         };
 };
 

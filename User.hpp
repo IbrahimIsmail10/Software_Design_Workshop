@@ -10,14 +10,20 @@ using namespace std;
 
 class UserC{
 	public:
-		UserC(const string& mail, uint8_t phoneNum) : m_mail(mail), m_phoneNum(phoneNum)
+		UserC() = default;
+		UserC(const string& username, uint8_t phoneNum) : username(username), m_phoneNum(phoneNum)
 		{}
-		void SetMail(const string& mail) { m_mail = mail; };
-		const string& GetMail() const { return m_mail; }
+		void SetUsername(const string& name) { username = name; };
+		const string& GetUsername() const { return username; }
 		void SetPhoneNum(uint8_t phoneNum) { m_phoneNum = phoneNum; }
 		const uint8_t& GetPhoneNum() const { return m_phoneNum; } 
+		void AddMovieTohistory(const MovieC& movie) { history.push_back(movie); }
+		void DisplayHistory() const { for(auto& movie : history) cout<<movie.GetTitle()<<endl; }
 	private:
-		string m_mail;
+		string username;
 		uint8_t m_phoneNum;
+		vector<MovieC> history;
 };
 #endif
+
+

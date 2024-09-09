@@ -1,6 +1,6 @@
-#include <iostream>
-#include "Common.hpp"
+#include"Functions.h"
 using namespace std;
+
 
 string dayToString(DayE day) {
     switch (day) {
@@ -22,16 +22,6 @@ string timeToString(TimeE time) {
         case TimeE::SIX_PM: return "6 PM";
         case TimeE::NINE_PM: return "9 PM";
         case TimeE::TWELEVE_AM: return "12 AM";
-        default: return "UNKNOWN";
-    }
-}
-
-
-string hallToString(HallE hall) {
-    switch (hall) {
-        case HallE::HALL_1: return "HALL_1";
-        case HallE::HALL_2: return "HALL_2";
-        case HallE::HALL_3: return "HALL_3";
         default: return "UNKNOWN";
     }
 }

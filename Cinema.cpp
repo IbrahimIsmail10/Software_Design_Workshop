@@ -4,7 +4,8 @@
 #define PAYPAL "paypal"
 unique_ptr<CinemaC> CinemaC::m_cinemaInst = nullptr;
 ShowTimeS show_time;
-
+UserC user;
+string username;
 unique_ptr<CinemaC>& CinemaC::GetCinemaInst()
 {
     if(!m_cinemaInst) {
@@ -75,6 +76,9 @@ void CinemaC::ReserveSeat(int hall_num, int movie_idx, int showtime_idx, const s
             if(PaymentProcess(price)){
                 seat->isAvailable = false;
                 cout<<"Seat Reserved"<<endl;
+                Ticket ticket(seatNumber, hall_num, price, show_time, m_movies[movie_idx].GetTitle());
+                ticket.DisplayTicket();
+                AddUserToHistory(user, m_movies[movie_idx]);
             }
             else{ cout<<"Payment Failed"<<endl;}  
         } 
@@ -100,10 +104,14 @@ bool CinemaC::PaymentProcess(int price)
         if(payment_type == DEPIT || payment_type == CREDIT) {
             string security_code;
             string phone;
+            cout<<"Enter Your Name: ";
+            cin>>username;
             cout<<"Enter Security Code: ";
             cin>>security_code;
             cout<<"Enter Phone Number: ";
             cin>>phone;
+            user.SetUsername(username);
+            user.SetPhoneNum(stoi(phone));
             payment = PaymentFactory::CreatePayment(payment_type, security_code, phone);
             if(payment) {
                 payment->ProcessPayment();
@@ -115,11 +123,17 @@ bool CinemaC::PaymentProcess(int price)
         }
         else if(payment_type == PAYPAL) {
             string email;
-            string password;
+            string password,phone;
+            cout<<"Enter Your Name: ";
+            cin>>username;
             cout<<"Enter Email: ";
             cin>>email;
             cout<<"Enter Password: ";
             cin>>password;
+            cout<<"Enter Phone Number: ";
+            cin>>phone;
+            user.SetUsername(username);
+            user.SetPhoneNum(stoi(phone));
             payment = PaymentFactory::CreatePayment(payment_type,password, email);
             if(payment) {
                 payment->ProcessPayment();
@@ -135,6 +149,32 @@ bool CinemaC::PaymentProcess(int price)
         }
     }
                
+}
+
+void CinemaC::AddUserToHistory(UserC& user, MovieC& movie) 
+{
+    user.AddMovieTohistory(movie);
+    users.push_back(make_shared<UserC>(user));
+    m_usersToMovies[movie.GetTitle()].push_back(user.GetUsername());
+}
+
+void CinemaC::DisplayUsersWatchingMovie(int movie_idx)
+{
+    cout<<"Users Watching "<<m_movies[movie_idx].GetTitle()<<endl;
+    for(auto& user : m_usersToMovies[m_movies[movie_idx].GetTitle()]) {
+        cout<<user<<endl;
+    }
+}
+
+void CinemaC::userMoviesHistory(const string& username)
+{
+    for(auto& user : users) {
+        if(user->GetUsername() == username) {
+            user->DisplayHistory();
+            return;
+        }
+    }
+    cout<<"User not found"<<endl;
 }
 
 

@@ -2,10 +2,10 @@
 #define MOVIE_HPP
 
 #include <string>
+#include <iostream>
 #include <vector>
 #include <unordered_map>
-
-#include "Common.hpp"
+#include "Ticket.hpp"
 
 using namespace std;
 
